@@ -1,32 +1,21 @@
 (function() {
 
-
     var POIs = [
-        {
-            id: "geo-item-1",
-            name: "24HR",
-            coords: {
-                lat: 55.60409,
-                long: 12.99868
-            }
-        }, {
-            id: "geo-item-2",
-            name: "Stortorget, Malmö", 
-            coords: {
-                lat: 55.60646,
-                long: 12.99991
-            }
-        }, {
-            id: "geo-item-3",
-            name: "Mattias", 
-            coords: {
-                lat: 55.52513,
-                long: 12.93840
-            }
-        }
+        { id: "geo-item-1", name: "Utanfør Tinne & Co", coords: { lat: 55.974315, long: 12.420044 } }, 
+        { id: "geo-item-2", name: "Away on the Cykelstig", coords: { lat: 55.974879, long: 12.418767 } }, 
+        { id: "geo-item-3", name: "Skolens Parkering", coords: { lat: 55.965251, long: 12.420532 } },
+        { id: "geo-item-4", name: "Matematiskt Spørgsmål", coords: { lat: 55.964056, long: 12.420881} },
+        { id: "geo-item-5", name: "Spørgsmål på Dansk", coords: { lat: 55.963083, long: 12.419915} },
+        { id: "geo-item-6", name: "Bonusquestion", coords: { lat: 55.963705, long: 12.418665} },
+        { id: "geo-item-7", name: "24HR", coords: { lat: 55.604068, long: 12.998663} },
+        { id: "geo-item-8", name: "Hovedbanegården Kbh", coords: { lat: 55.673253, long: 12.564132 }},
+        { id: "geo-item-9", name: "Geometri", coords: { lat: 55.666128, long: 12.091993 }},
+        { id: "geo-item-10", name: "Syre og base", coords: { lat: 55.666893, long: 12.095330}},
+        { id: "geo-item-11", name: "Stedord", coords: { lat: 55.667268, long: 12.090535}} 
     ];
 
     var domLoaded = false;
+    var checkGeo = -1;
 
     if (!domLoaded) {
         document.addEventListener("DOMContentLoaded", function() {
@@ -56,6 +45,7 @@
     function init() {
 
         var geoDom = document.querySelector("#geo-coordinate");
+        var noGeo = document.querySelector("#no-geo");
 
         var geoContainer = document.querySelector("#geo-container");
 
@@ -74,16 +64,19 @@
 
         function useGeo(position) {
 
+            clearTimeout(checkGeo);
+            noGeo.classList.remove("show");
+
             for(var i = 0, ii = POIs.length; i < ii; i++){ 
                 var POI = POIs[i];
-                var distance = calculateDistance(position.coords.latitude, position.coords.longitude, POI.coords.lat, POI.coords.long);
+                var distance = Math.round(calculateDistance(position.coords.latitude, position.coords.longitude, POI.coords.lat, POI.coords.long));
                 var domItem = document.querySelector("#" + POI.id);
-                if (distance < 20) {
+                if (distance <= 5) {
                     domItem.classList.add("active");
                 } else {
                     domItem.classList.remove("active");
                 }
-                domItem.querySelector(".distance").innerHTML = distance.toFixed(0) + "m";
+                domItem.querySelector(".distance").innerHTML = distance + "m";
             }
 
             geoDom.innerHTML = position.coords.latitude + ", " + position.coords.longitude;
@@ -91,12 +84,17 @@
             setTimeout(function() {
                 navigator.geolocation.getCurrentPosition(useGeo);
             }, 200);
+
         }
 
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(useGeo);
+            checkGeo = setTimeout(function() {
+                noGeo.classList.add("show");
+            }, 4000);
         } else {
             geoDom.innerHTML = "Geolocation is not supported by this browser.";
+            noGeo.classList.add("show");
         }
 
     }
