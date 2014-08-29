@@ -39,7 +39,7 @@ h1
         background-color lighten(green, 10%)
         color white
         .distance
-            color white     
+            color white
     
     .pos
         font-size 1.2rem
@@ -49,6 +49,19 @@ h1
     .distance
         color lighten(grey, 5%)
         font-size 1.2rem
+    .question
+        background-color darken(green,60%)
+        padding 5px 20px
+        font-size 0.8em
+        display none
+        &.active
+            display block
+    form
+        display none
+        &.active
+            display block
+        &.done
+            display block
 
 .no-geo
     flex 1
