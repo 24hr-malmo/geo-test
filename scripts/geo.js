@@ -14,7 +14,7 @@
         { id: "geo-item-11", name: "Stedord", coords: { lat: 55.667268, long: 12.090535}} */
     ];
 
-    var _id = location.search.replace(/^.*?\=/, '');
+    var _id = location.pathname.replace(/\//g, '');
     var domLoaded = false;
     var checkGeo = -1;
 
@@ -22,8 +22,7 @@
         document.addEventListener("DOMContentLoaded", function() {
             domLoaded = true;
 
-            jQuery.get("http://localhost/geotest/wordpress/",function (data) {
-                               
+            jQuery.get(location.protocol + "//" + location.hostname + "/wordpress",function (data) {
                 for (var i = 0; i < data[_id].length; i++) {
                     POIs.push(data[_id][i]);
 
@@ -86,9 +85,10 @@
 
             for(var i = 0, ii = POIs.length; i < ii; i++){ 
                 var POI = POIs[i];
+		var radius = POI.radius || 15;
                 var distance = Math.round(calculateDistance(position.coords.latitude, position.coords.longitude, POI.coords.lat, POI.coords.long));
                 var domItem = document.querySelector("#" + POI.id);
-                if (distance <= 8) {
+                if (distance <= radius) {
                     domItem.classList.add("active");
                     domItem.querySelector(".question").classList.add("active");
                     domItem.querySelector("form").classList.add("active")
